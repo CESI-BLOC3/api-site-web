@@ -1,0 +1,1 @@
+<?php if (!empty($_SESSION['flash'])): ?><div class="p-3 mb-4 rounded bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"><?php echo App\Core\View::e($_SESSION['flash']); unset($_SESSION['flash']); ?></div><?php endif; ?>

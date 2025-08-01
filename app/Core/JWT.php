@@ -1,0 +1,4 @@
+<?php namespace App\Core;
+class JWT { private static function b64url($d){ return rtrim(strtr(base64_encode($d),'+/','-_'),'='); } private static function b64urld($d){ return base64_decode(strtr($d,'-_','+/')); }
+  public static function encode(array $payload, string $secret): string{ $header=['typ'=>'JWT','alg'=>'HS256']; $segments=[ self::b64url(json_encode($header)), self::b64url(json_encode($payload)) ]; $sig=hash_hmac('sha256', implode('.',$segments), $secret, true); $segments[]=self::b64url($sig); return implode('.',$segments); }
+  public static function decode(string $jwt, string $secret): ?array{ $parts=explode('.',$jwt); if(count($parts)!==3) return null; [$h,$p,$s]=$parts; $calc=hash_hmac('sha256',$h.'.'.$p,$secret,true); if(!hash_equals(self::b64urld($s), $calc)) return null; $payload=json_decode(self::b64urld($p), true); if(!empty($payload['exp']) && time() >= $payload['exp']) return null; return $payload; } }
